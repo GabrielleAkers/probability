@@ -1,0 +1,19 @@
+{
+  "name": "probability",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsc -w & node serve.cjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gabby Akers",
+  "license": "MIT",
+  "description": "",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "plotly.js-dist": "^2.35.0"
+  }
+}
