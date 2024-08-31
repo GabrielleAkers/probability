@@ -1,7 +1,7 @@
 {
   "name": "probability",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "dev": "tsc -w & node serve.cjs",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,10 +10,14 @@
   "license": "MIT",
   "description": "",
   "devDependencies": {
+    "@types/plotly.js": "^2.33.3",
+    "@types/plotly.js-basic-dist": "^1.54.4",
     "http-server": "^14.1.1",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "plotly.js-dist": "^2.35.0"
+    "plotly.js-basic-dist": "^2.35.0"
   }
 }

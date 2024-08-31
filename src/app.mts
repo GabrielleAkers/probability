@@ -38,7 +38,7 @@ const LAST_DEMO_STORAGE_KEY = "LAST_DEMO";
     if (last_demo_name) {
         const demo = available_demos.find(d => d.name == last_demo_name);
         if (demo) {
-            loaded_demo = await import(demo.path);
+            loaded_demo = await import(`${demo.path}`);
             loaded_demo_cleanup = await loaded_demo?.load(load_elems);
             const title = document.getElementById("title");
             if (title)

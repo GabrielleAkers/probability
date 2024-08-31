@@ -25,6 +25,12 @@ class StatsTracker {
         return this.stats;
     }
 }
+export function is_flip_result(arg) {
+    return arg && typeof arg.label === "string";
+}
+export function is_flip_sequence_result(arg) {
+    return arg && Array.isArray(arg.sequence);
+}
 export class Flipper {
     _weights;
     _labels;

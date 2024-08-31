@@ -20,4 +20,5 @@ const run = (cmd, args = []) => {
 	return p;
 }
 
+run("npx webpack");
 run("http-server", ["-p", "3000", "-a", "0.0.0.0", "-c-1", "-d", "false", "-s"]);

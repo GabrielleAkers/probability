@@ -1,8 +1,3 @@
-export type FlipResult = {
-    weight_index: number;
-    label: string;
-};
-
 class StatsTracker {
     private stats: Record<string, { count: number, percentage: number; }> = {};
 
@@ -34,10 +29,23 @@ class StatsTracker {
     }
 }
 
+export type FlipResult = {
+    weight_index: number;
+    label: string;
+};
+
 export type FlipSequenceResult = {
     sequence: FlipResult[];
     stats: StatsTracker;
 };
+
+export function is_flip_result(arg: any): arg is FlipResult {
+    return arg && typeof arg.label === "string";
+}
+
+export function is_flip_sequence_result(arg: any): arg is FlipSequenceResult {
+    return arg && Array.isArray(arg.sequence);
+}
 
 export abstract class Flipper {
     _weights: number[];

@@ -1,4 +1,5 @@
-import { Coin, FlipperContainer } from "./flippers.mjs";
+import { Coin, FlipperContainer, is_flip_result, is_flip_sequence_result } from "./flippers.mjs";
+import * as Plotly from "plotly.js-basic-dist";
 export const load = async (load_elems) => {
     const controls_container = document.createElement("div");
     controls_container.style.display = "grid";
@@ -78,6 +79,29 @@ export const load = async (load_elems) => {
         update_summary();
     };
     controls_container.appendChild(add_coin_btn);
+    const add_n_holder = document.createElement("div");
+    add_n_holder.style.display = "grid";
+    add_n_holder.style.gridTemplateColumns = "repeat(2, 80px)";
+    let num_coins = 1;
+    const add_n_input = document.createElement("input");
+    add_n_input.type = "number";
+    add_n_input.min = "1";
+    add_n_input.defaultValue = num_coins.toString();
+    add_n_input.onchange = evt => {
+        // @ts-ignore
+        num_coins = parseInt(evt.target.value);
+    };
+    const add_n_btn = document.createElement("button");
+    add_n_btn.innerText = "Add N";
+    add_n_btn.onclick = () => {
+        for (let i = 0; i < num_coins; i++) {
+            CoinContainer.push(new Coin([new_coin_heads_probability, 1.0 - new_coin_heads_probability]));
+        }
+        update_summary();
+    };
+    add_n_holder.appendChild(add_n_input);
+    add_n_holder.appendChild(add_n_btn);
+    controls_container.appendChild(add_n_holder);
     const remove_last_coin_btn = document.createElement("button");
     remove_last_coin_btn.innerText = "Remove Last";
     remove_last_coin_btn.onclick = () => {
@@ -106,6 +130,31 @@ export const load = async (load_elems) => {
     results_container.style.color = "white";
     results_container.style.textAlign = "center";
     results_container.style.textWrap = "wrap";
+    const build_chart = (x, y) => {
+        const total = y.reduce((s, v) => s + v);
+        const chart_data = [
+            {
+                x,
+                y,
+                type: "bar",
+                text: y.map(v => `
+                ${v} : ${((v / total) * 100).toPrecision(4)}%
+                `),
+                textposition: "auto",
+                hoverinfo: "none"
+            }
+        ];
+        const chart_layout = {
+            title: "Result",
+            xaxis: {
+                title: "Face"
+            },
+            yaxis: {
+                title: "Count"
+            }
+        };
+        Plotly.newPlot(results_container, chart_data, chart_layout);
+    };
     const result_string = document.createElement("p");
     result_string.style.textWrap = "wrap";
     results_container.appendChild(result_string);
@@ -147,17 +196,16 @@ export const load = async (load_elems) => {
     w_replace_holder.appendChild(flip_with_replacement_check);
     flip_container.appendChild(w_replace_holder);
     const flip_rnd_btn = document.createElement("button");
-    flip_rnd_btn.innerText = "Flip Random";
+    flip_rnd_btn.innerText = "Flip";
     flip_rnd_btn.onclick = () => {
         const r = CoinContainer.flip_random(num_flips, flip_with_replacement);
+        results_container.replaceChildren();
         if (r) {
             console.log("result", r);
-            if (Object.hasOwn(r, "label"))
+            if (is_flip_result(r))
                 result_string.innerHTML = r.label;
-            if (Object.hasOwn(r, "sequence")) {
-                const o = r;
-                result_string.innerHTML = o.sequence.map(res => res.label).toString();
-                result_percentages_string.innerHTML = Object.keys(o.stats.data).sort().map(k => `${k} : ${o.stats.data[k].count} | ${o.stats.data[k].percentage} `).toString();
+            if (is_flip_sequence_result(r)) {
+                build_chart(["H", "T"], [r.stats.data["H"].count || 0, r.stats.data["T"].count || 0]);
             }
         }
     };
