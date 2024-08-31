@@ -230,8 +230,10 @@ export const load = async (load_elems: ElementLoaderCallback) => {
         results_container.replaceChildren();
         if (r) {
             console.log("result", r);
-            if (is_flip_result(r))
+            if (is_flip_result(r)) {
+                results_container.appendChild(result_string);
                 result_string.innerHTML = r.label;
+            }
             if (is_flip_sequence_result(r)) {
                 build_chart(["H", "T"], [r.stats.data["H"].count || 0, r.stats.data["T"].count || 0]);
             }
