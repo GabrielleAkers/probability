@@ -161,25 +161,25 @@ export const load = async (load_elems) => {
     const result_percentages_string = document.createElement("p");
     result_percentages_string.style.textWrap = "wrap";
     results_container.appendChild(result_percentages_string);
-    const flip_container = document.createElement("div");
-    flip_container.style.display = "grid";
-    flip_container.style.gridTemplateColumns = "repeat(2, 80px)";
-    flip_container.style.alignItems = "center";
-    flip_container.style.justifyContent = "center";
-    let num_flips = 1;
-    const num_flips_label = document.createElement("p");
-    num_flips_label.innerHTML = "Num Flips";
-    flip_container.appendChild(num_flips_label);
-    const num_flips_input = document.createElement("input");
-    num_flips_input.type = "number";
-    num_flips_input.min = "1";
-    num_flips_input.defaultValue = num_flips.toString();
-    num_flips_input.onchange = evt => {
+    const trials_container = document.createElement("div");
+    trials_container.style.display = "grid";
+    trials_container.style.gridTemplateColumns = "repeat(2, 80px)";
+    trials_container.style.alignItems = "center";
+    trials_container.style.justifyContent = "center";
+    let num_trials = 1;
+    const num_trials_label = document.createElement("p");
+    num_trials_label.innerHTML = "Num Trials";
+    trials_container.appendChild(num_trials_label);
+    const num_trials_input = document.createElement("input");
+    num_trials_input.type = "number";
+    num_trials_input.min = "1";
+    num_trials_input.defaultValue = num_trials.toString();
+    num_trials_input.onchange = evt => {
         // @ts-ignore
-        num_flips = parseInt(evt.target.value);
-        console.log(num_flips);
+        num_trials = parseInt(evt.target.value);
+        console.log(num_trials);
     };
-    flip_container.appendChild(num_flips_input);
+    trials_container.appendChild(num_trials_input);
     let flip_with_replacement = false;
     const w_replace_holder = document.createElement("div");
     const flip_with_replacement_check = document.createElement("input");
@@ -194,14 +194,13 @@ export const load = async (load_elems) => {
     flip_with_replacement_label.innerHTML = "Replace?";
     w_replace_holder.appendChild(flip_with_replacement_label);
     w_replace_holder.appendChild(flip_with_replacement_check);
-    flip_container.appendChild(w_replace_holder);
+    trials_container.appendChild(w_replace_holder);
     const flip_rnd_btn = document.createElement("button");
-    flip_rnd_btn.innerText = "Flip";
+    flip_rnd_btn.innerText = "Flip Rnd";
     flip_rnd_btn.onclick = () => {
-        const r = CoinContainer.flip_random(num_flips, flip_with_replacement);
+        const r = CoinContainer.flip_random(num_trials, flip_with_replacement);
         results_container.replaceChildren();
         if (r) {
-            console.log("result", r);
             if (is_flip_result(r)) {
                 results_container.appendChild(result_string);
                 result_string.innerHTML = r.label;
@@ -211,8 +210,23 @@ export const load = async (load_elems) => {
             }
         }
     };
-    flip_container.appendChild(flip_rnd_btn);
-    controls_container.appendChild(flip_container);
+    trials_container.appendChild(flip_rnd_btn);
+    controls_container.appendChild(trials_container);
+    const flip_all_btn = document.createElement("button");
+    flip_all_btn.innerText = "Flip All";
+    flip_all_btn.onclick = () => {
+        const r = CoinContainer.flip_all(num_trials);
+        results_container.replaceChildren();
+        results_container.appendChild(result_string);
+        result_string.innerHTML = `${r.flatMap(seq => seq.sequence).map(flip => flip.label)}`;
+        const res = r.reduce((p, c) => {
+            p[0] += c.stats.data["H"]?.count || 0;
+            p[1] += c.stats.data["T"]?.count || 0;
+            return p;
+        }, [0, 0]);
+        build_chart(["H", "T"], res);
+    };
+    controls_container.appendChild(flip_all_btn);
     load_elems([controls_container, coin_summary, results_container]);
     return () => {
         // cleanup function

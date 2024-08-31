@@ -113,11 +113,7 @@ export class FlipperContainer {
     flip_all(num_flips = 1) {
         const res = [];
         this._flippers.forEach(flipper => {
-            if (num_flips === 1) {
-                res.push(flipper.flip());
-            }
-            else
-                res.push(flipper.flip_sequence(num_flips));
+            res.push(flipper.flip_sequence(num_flips));
         });
         return res;
     }
