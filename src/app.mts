@@ -77,7 +77,7 @@ const LAST_DEMO_STORAGE_KEY = "LAST_DEMO";
             evt.preventDefault();
             if (loaded_demo)
                 unload();
-            loaded_demo = await import(demo.path);
+            loaded_demo = await import(`${demo.path}`);
             if (loaded_demo) {
                 loaded_demo_cleanup = await loaded_demo.load(load_elems);
                 window.localStorage.setItem(LAST_DEMO_STORAGE_KEY, demo.name);
